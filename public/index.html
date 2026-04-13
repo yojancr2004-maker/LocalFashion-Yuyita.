@@ -47,3 +47,49 @@
     </script>
 </body>
 </html>
+<h2>Lista de Categorías</h2>
+<table id="tabla-categorias">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Categoría</th>
+        </tr>
+    </thead>
+    <tbody id="contenido-categorias">
+        </tbody>
+</table>
+
+<script>
+    // Agregamos este pedazo al script que ya tienes
+    fetch('/categorias')
+        .then(res => res.json())
+        .then(data => {
+            let html = '';
+            data.forEach(cat => {
+                html += `<tr><td>${cat.id}</td><td>${cat.nombre}</td></tr>`;
+            });
+            document.getElementById('contenido-categorias').innerHTML = html;
+        });
+</script>
+<h2>Categorías de Ropa</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+        </tr>
+    </thead>
+    <tbody id="lista-categorias"></tbody>
+</table>
+
+<script>
+    // Esto va dentro de tu <script> actual
+    fetch('/categorias')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('lista-categorias');
+            data.forEach(cat => {
+                tbody.innerHTML += `<tr><td>${cat.id}</td><td>${cat.nombre}</td></tr>`;
+            });
+        });
+</script>

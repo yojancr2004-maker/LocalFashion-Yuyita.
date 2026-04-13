@@ -10,13 +10,19 @@ app.get('/ping', (req, res) => {
 app.listen(3000)
 console.log('El servidor está escuchando en el puerto 3000')
 
-
-
 app.get('/productos', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM productos');
         res.json(rows);
     } catch (error) {
         res.status(500).send('Error al consultar la base de datos');
+    }
+});
+app.get('/categorias', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM categorias');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).send('Error al consultar categorías');
     }
 });
