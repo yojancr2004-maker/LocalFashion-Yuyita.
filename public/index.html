@@ -2,94 +2,84 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario - Creaciones Yuyita</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background-color: #f0f2f5; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background-color: #f4f4f9; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
+        h1, h2 { color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 40px; }
         th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
         th { background-color: #1a73e8; color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📦 Inventario LocalFashion</h1>
-        <table id="tabla">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
-    </div>
 
-    <script>
-        // Esta función va al servidor y trae los productos
-        fetch('/productos')
-            .then(response => response.json())
-            .then(data => {
-                const tablaBody = document.querySelector('#tabla tbody');
-                data.forEach(producto => {
-                    tablaBody.innerHTML += `
-                        <tr>
-                            <td>${producto.id}</td>
-                            <td>${producto.nombre}</td>
-                            <td>$${producto.precio}</td>
-                        </tr>`;
-                });
+<div class="container">
+    <h1>📦 Inventario LocalFashion</h1>
+    
+    <h2>Productos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody id="contenido-productos">
+            </tbody>
+    </table>
+
+    <h2>Categorías de Ropa</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody id="contenido-categorias">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // Función para cargar los productos
+    fetch('/productos')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('contenido-productos');
+            let html = '';
+            data.forEach(p => {
+                // Usamos p.id y p.nombre porque así están en tu DB
+                html += `<tr>
+                    <td>${p.id}</td>
+                    <td>${p.nombre}</td>
+                    <td>$${p.precio || '0'}</td>
+                </tr>`;
             });
-    </script>
+            tbody.innerHTML = html;
+        })
+        .catch(err => console.error('Error cargando productos:', err));
+
+    // Función para cargar las categorías
+    fetch('/categorias')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('contenido-categorias');
+            let html = '';
+            data.forEach(c => {
+                html += `<tr>
+                    <td>${c.id}</td>
+                    <td>${c.nombre}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        })
+        .catch(err => console.error('Error cargando categorías:', err));
+</script>
+
 </body>
 </html>
-<h2>Lista de Categorías</h2>
-<table id="tabla-categorias">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Categoría</th>
-        </tr>
-    </thead>
-    <tbody id="contenido-categorias">
-        </tbody>
-</table>
-
-<script>
-    // Agregamos este pedazo al script que ya tienes
-    fetch('/categorias')
-        .then(res => res.json())
-        .then(data => {
-            let html = '';
-            data.forEach(cat => {
-                html += `<tr><td>${cat.id}</td><td>${cat.nombre}</td></tr>`;
-            });
-            document.getElementById('contenido-categorias').innerHTML = html;
-        });
-</script>
-<h2>Categorías de Ropa</h2>
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-        </tr>
-    </thead>
-    <tbody id="lista-categorias"></tbody>
-</table>
-
-<script>
-    // Esto va dentro de tu <script> actual
-    fetch('/categorias')
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById('lista-categorias');
-            data.forEach(cat => {
-                tbody.innerHTML += `<tr><td>${cat.id}</td><td>${cat.nombre}</td></tr>`;
-            });
-        });
-</script>
