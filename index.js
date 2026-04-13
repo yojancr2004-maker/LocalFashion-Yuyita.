@@ -1,28 +1,34 @@
-import express from 'express'
-import {pool} from "./db.js";
+const express = require('express');
+const pool = require('./db'); // Asegúrate de que este archivo exista para la conexión
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const app = express()
-app.use(express.static('public'));
-app.get('/ping', (req, res) => {
-    res.send('¡Servidor funcionando, vamos con toda!')
-})
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(3000)
-console.log('El servidor está escuchando en el puerto 3000')
-
+// RUTA PARA PRODUCTOS (Con P mayúscula como en tu Railway)
 app.get('/productos', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM Productos');
         res.json(rows);
     } catch (error) {
-        res.status(500).send('Error al consultar la base de datos');
+        console.error(error);
+        res.status(500).send('Error al consultar la base de datos de Productos');
     }
 });
+
+// RUTA PARA CATEGORÍAS (En minúscula como en tu Railway)
 app.get('/categorias', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM categorias');
         res.json(rows);
     } catch (error) {
-        res.status(500).send('Error al consultar categorías');
+        console.error(error);
+        res.status(500).send('Error al consultar la base de datos de categorías');
     }
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
