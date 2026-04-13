@@ -1,34 +1,36 @@
-const express = require('express');
-const pool = require('./db'); // Asegúrate de que este archivo exista para la conexión
-const path = require('path');
+import express from 'express';
+import { pool } from './db.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// RUTA PARA PRODUCTOS (Con P mayúscula como en tu Railway)
+// Ruta para Productos (P mayúscula)
 app.get('/productos', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM Productos');
         res.json(rows);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error al consultar la base de datos de Productos');
+        console.error("Error en Productos:", error);
+        res.status(500).json({ error: "Error en la base de datos" });
     }
 });
 
-// RUTA PARA CATEGORÍAS (En minúscula como en tu Railway)
+// Ruta para categorías (minúscula)
 app.get('/categorias', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM categorias');
         res.json(rows);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error al consultar la base de datos de categorías');
+        console.error("Error en Categorias:", error);
+        res.status(500).json({ error: "Error en la base de datos" });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+    console.log(`Servidor en puerto ${PORT}`);
 });
